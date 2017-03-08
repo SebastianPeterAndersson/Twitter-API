@@ -2,7 +2,7 @@
 
 /*
     This is Sebastian Andersson's twitter app.
-    This project is a part of the Fullstack JavaScript Developer course on
+    It is the seventh project of the Fullstack JavaScript Developer course on
     http://www.teamtreehouse.com
 
     Here I will be creating an app that let's me see what's going on my twitter profile.
@@ -16,7 +16,7 @@
         - Get 5 latest tweets
         - Get 5 latest friends (people followed)
         - Get 5 latest private messages
-        - Send tweet
+        - Post tweet
 
 */
 
@@ -25,14 +25,12 @@
 
 const express = require("express"),
     app = express(),
-    construct = require("./modules/constructors.js"),
     config = require("./config.js"), //config.T to get twitter user configuration.
     //Storing functions that are needed for the program to work:
     functions = require("./functions/functions.js"),
     pug = require("pug"),
     Twit = require("twit"),
     T = new Twit(config),
-    //userID = "830341588123602945",
     bodyParser = require("body-parser"),
     urlencodedParser = bodyParser.urlencoded({ extended: false }),
     jsonParser = bodyParser.json();
@@ -42,33 +40,6 @@ const express = require("express"),
 
 //–––––––| Testing Area |–––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
-var stream = T.stream('statuses/sample');
-
-/*
-stream.on('tweet', function (tweet) {
-  console.log(tweet);
-});
-*/
-//users/lookup
-
-/*
-let u = new Promise(function(resolve, reject) {
-    T.get("account/settings", function(err, data, response) {
-        resolve(data.screen_name);
-    });
-});
-
-u.then(function(value) {
-    T.get("users/show", {screen_name: value} , function(err, data, response) {
-        console.log(data.id);
-    });
-});
-
-*/
-
-
-
-
 //––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
 
@@ -76,7 +47,6 @@ u.then(function(value) {
 
 app.set("views", __dirname + "/views");
 app.set("view engine", "pug");
-
 
 //––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
@@ -96,8 +66,7 @@ app.use(bodyParser.text({ type: 'text/html' }));
 
 //––––––| Routes |––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
-// Firstly, I must generate the screen_name of the current user.
-
+//Before anything can be done, the username is needed:
 functions.getUserName(T).then(function(screen_name) {
     // Push all the required information to an array so that we can chain promises:
         const promiseArr = [];
@@ -113,8 +82,9 @@ functions.getUserName(T).then(function(screen_name) {
 
         // When all information is gathered:
         Promise.all(promiseArr).then(function(value) {
-            // On tweet event:
+            // The value above is an array with four arrays within it. Each containing one or more objects.
             let tweets = [];
+            // Iterate over the first array and construct a json for each one.
             for (var i = 0; value[0].length > i; i++) {
                 let obj = value[0][i];
                 let json = {};
@@ -122,21 +92,25 @@ functions.getUserName(T).then(function(screen_name) {
                 json.retweets = obj.retweet_count;
                 json.favourites = obj.user.favourites_count;
                 json.date = obj.created_at;
+                // Push the tweets to the tweets array:
                 tweets.push(json);
             }
 
 
             let friends = [];
+            // Iterate over the second array and construct a json for each one.
             for (var i = 0; value[1].length > i; i++) {
                 let obj = value[1][i];
                 let json = {}
                 json.name = obj.name;
                 json.screen_name = obj.screen_name;
                 json.profile_image = obj.profile_image_url;
+                // Push the friends to the friends array:
                 friends.push(json);
             }
 
             let messages = [];
+            // Iterate over the third array and construct a json for each one.
             for (var i = 0; value[2].length > i; i++) {
                 let obj = value[2][i];
                 let json = {};
@@ -144,48 +118,43 @@ functions.getUserName(T).then(function(screen_name) {
                 json.date_time = obj.created_at;
                 json.sender = obj.sender.name;
                 json.sender_img = obj.sender.profile_image_url;
+                // Push the messages to the messages array:
                 messages.push(json);
             }
-
+                // The fourth array is only one object, which means no loop is necessary:
                 let obj = value[3];
                 let userInfo = {};
                 userInfo.name = obj.name;
                 userInfo.image = obj.profile_image_url;
                 userInfo.screen_name = obj.screen_name;
 
-            /*
-            console.log(
-            "Tweets: \n", tweets, "\n",
-            "Friends: \n", friends, "\n",
-            "Messages: \n", messages
-            );
-            */
-            app.post("/test", urlencodedParser, function(req, res) {
-                console.log("The tweet button was clicked!");
-
-                /*
+            // When the tweet button is submitted, a post request is sent to this
+            // location and whatever the tweet value is, is tweeted:
+            app.post("/tweet", urlencodedParser, function(req, res) {
+                console.log("The tweet button was clicked!", req.body.tweet);
                 T.post('statuses/update', { status: req.body.tweet }, function(err, data, response) {
-                    console.log(data)
+                    if (err) {
+                        console.log(err);
+                    }
+
+                    if (data.text === undefined) {
+                        console.log("Tweets with no content can't be posted!");
+                    } else {
+                        console.log("Tweet sent:", data.text, "\n At:", data.created_at)
+                    }
                 });
-                */
-
             });
-
-            /*
-            var reader = dynamicallyGenerate();
-            */
 
             // Main route
             app.get("/", function(req, res) {
-                    let tweetName;
                     res.render("layout", {
                         title: "My Twitter App",
+                        //Arrays :
                         tweets: tweets,
                         messages: messages,
                         friends: friends,
                         userInfo: userInfo
                     });
-
             });
 
         })
@@ -197,13 +166,6 @@ functions.getUserName(T).then(function(screen_name) {
     .catch(function(err) {
         console.log(err);
     });
-
-
-
-
-
-
-    // Get
 
 //––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
@@ -222,32 +184,3 @@ app.listen(3000, () => {
 module.exports = app;
 
 //––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
-
-
-// Tasks:
-
-    //App
-
-    // * Tweet <POST>
-    // * Sign Out <GET>
-
-    //Timeline
-
-        // * Reply <POST>
-        // * Retweet <POST>
-        // * Favorite <POST>
-
-    //Direct Messages
-
-        // * Get Message <POST>
-        // * Type <POST>
-        // * Reply <POST>
-
-
-// Prototypes:
-
-    // * Following skeleton
-        // $("li.circle-fluid")
-
-    // * Tweet skeleton
-        // $("ul.app--tweet--list li")
