@@ -3,13 +3,21 @@
 /*
     This is Sebastian Andersson's twitter app.
     This project is a part of the Fullstack JavaScript Developer course on
-    http://www.teamtreehouse.com.
+    http://www.teamtreehouse.com
 
     Here I will be creating an app that let's me see what's going on my twitter profile.
     Modules used:
-        -Express
-        -Pug
-        -Twit
+        - Express
+        - Pug
+        - Twit
+        - Body Parsers
+
+    Functionality:
+        - Get 5 latest tweets
+        - Get 5 latest friends (people followed)
+        - Get 5 latest private messages
+        - Send tweet
+
 */
 
 
@@ -24,7 +32,7 @@ const express = require("express"),
     pug = require("pug"),
     Twit = require("twit"),
     T = new Twit(config),
-    userID = "830341588123602945",
+    //userID = "830341588123602945",
     bodyParser = require("body-parser"),
     urlencodedParser = bodyParser.urlencoded({ extended: false }),
     jsonParser = bodyParser.json();
@@ -90,21 +98,18 @@ app.use(bodyParser.text({ type: 'text/html' }));
 
 // Firstly, I must generate the screen_name of the current user.
 
-functions.getUserName(T).then(function(value) {
-    console.log(value)
-});
-
+functions.getUserName(T).then(function(screen_name) {
     // Push all the required information to an array so that we can chain promises:
-    const promiseArr = [];
+        const promiseArr = [];
 
         // Get tweets:
-        promiseArr.push(functions.getTweets(userID, T));
+        promiseArr.push(functions.getTweets(screen_name, T));
         // Get Friends
-        promiseArr.push(functions.getFriends(userID, T));
+        promiseArr.push(functions.getFriends(screen_name, T));
         // Get messages
-        promiseArr.push(functions.getMessages(userID, T));
+        promiseArr.push(functions.getMessages(screen_name, T));
         // Get info
-        promiseArr.push(functions.getUserInfo(userID, T));
+        promiseArr.push(functions.getUserInfo(screen_name, T));
 
         // When all information is gathered:
         Promise.all(promiseArr).then(function(value) {
@@ -183,9 +188,15 @@ functions.getUserName(T).then(function(value) {
 
             });
 
+        })
+        .catch(function(err) {
+            console.log(err);
         });
 
-
+    })
+    .catch(function(err) {
+        console.log(err);
+    });
 
 
 

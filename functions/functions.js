@@ -2,32 +2,38 @@
 
 const exportThis = module.exports;
 
-exportThis.getUserInfo = (function(userID, T) {
+// *
+
+exportThis.getUserInfo = (function(screen_name, T) {
     return new Promise(function(resolve,reject) {
-        T.get("users/show", {user_id: userID}, (err, data, response) => {
+        T.get("users/show", {screen_name: screen_name}, (err, data, response) => {
             if (err) {
-                reject("Oh no!");
+                reject(err);
             }
             resolve(data);
         });
     });
 });
 
- exportThis.getTweets = (function (userID, T) {
+// *
+
+ exportThis.getTweets = (function (screen_name, T) {
     return new Promise(function(resolve, reject) {
-        T.get("statuses/user_timeline", {user_id: userID, count: 5}, (err, data, response) => {
+        T.get("statuses/user_timeline", {screen_name: screen_name, count: 5}, (err, data, response) => {
             if (err) {
-                reject (err);
+                reject(err);
             } else {
-                resolve (data);
+                resolve(data);
             }
         });
     });
 });
 
-exportThis.getFriends = (function(userID, T) {
+// *
+
+exportThis.getFriends = (function(screen_name, T) {
     return new Promise(function(resolve, reject) {
-        T.get("friends/list", {user_id: userID, count: 5}, (err, data, response) => {
+        T.get("friends/list", {screen_name: screen_name, count: 5}, (err, data, response) => {
             if (err) {
                 reject(err);
             }
@@ -35,6 +41,8 @@ exportThis.getFriends = (function(userID, T) {
         });
     });
 });
+
+// *
 
 exportThis.getMessages = (function(value, T) {
     return new Promise(function(resolve, reject) {
@@ -50,6 +58,9 @@ exportThis.getMessages = (function(value, T) {
 exportThis.onTweetClick = function(inputValue) {
     return new Promise(function(resolve, reject) {
         T.post('statuses/update', { status: inputValue }, function(err, data, response) {
+            if (err) {
+                reject(err);
+            }
             console.log(data);
         });
     });
@@ -58,6 +69,9 @@ exportThis.onTweetClick = function(inputValue) {
 exportThis.getUserName = function(T){
     return new Promise(function(resolve, reject) {
         T.get("account/settings", function(err, data, response){
+            if (err) {
+                reject(err);
+            }
             resolve(data.screen_name);
         });
     });
