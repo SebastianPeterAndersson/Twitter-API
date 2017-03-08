@@ -2303,13 +2303,14 @@ a:hover .app--avatar {
 }
 /* line 139, ../sass/global.sass */
 .app--tweet--list p, .app--user--list p {
-  font-size: 1.8rem;
+
   margin: 0 0 5px;
   line-height: 1.4;
 }
 /* line 144, ../sass/global.sass */
 .app--tweet--timestamp, .app--user--timestamp {
-  float: right;
+    display: block;
+    font-size:12px;
   color: #ccc;
 }
 /* line 148, ../sass/global.sass */
@@ -2346,7 +2347,7 @@ a:hover .app--avatar {
   cursor: pointer;
 }
 /* line 168, ../sass/global.sass */
-.app--tweet--actions a:hover, .app--user--actions a:hover {
+.app--tweet--actions hover, .app--user--actions a:hover {
   color: #1da1f2;
 }
 /* line 170, ../sass/global.sass */
@@ -2395,7 +2396,7 @@ a:hover .app--avatar {
 }
 /* line 198, ../sass/global.sass */
 .app--user--list > li {
-  padding: 20px 5px 20px 75px;
+  padding: 20px 20px 20px 75px;
 }
 /* line 200, ../sass/global.sass */
 .app--user--list .button-text {
@@ -2499,4 +2500,51 @@ input[type="submit"],
 input[type="reset"],
 input[type="button"] {
   padding: 16px 20px;
+}
+
+
+/* MY OWN STYLES */
+
+li p {
+    color: black;
+}
+
+li span {
+    margin-bottom: 5px;
+    display: inline-block;
+}
+
+.circle--fluid p {
+    color: #0c85d0;
+}
+
+p.time--stamp {
+    font-size: 10px;
+    color: gray;
+    margin-bottom:15px;
+    margin-top: 0;
+}
+
+p.sender--name {
+    margin: 10px;
+    margin-top:0 ;
+}
+
+.tweet--text {
+    padding: 13px;
+    color: white;
+    border: 1px solid #0c85d0;
+    margin: 16px 0;
+    margin-bottom: 19px;
+}
+
+.tweet--text p {
+    margin: 0;
+    font-size: 13px;
+}
+
+.tweet--text p:first-child {
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 100%;
 }

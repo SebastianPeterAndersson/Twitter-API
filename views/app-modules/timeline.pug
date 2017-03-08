@@ -1,0 +1,25 @@
+.grid-33
+    .app--section
+        ul.app--tweet--list
+            each val in tweets
+                li
+                    a.app--tweet--author
+                    .app--avatar(style='background-image: url(' + userInfo.image + ')')
+                      img(src='userInfo.image')
+                    h4(style="margin-bottom: 2px")= userInfo.name
+                    p.app--tweet--timestamp= "on " + val.date
+                    a(target="_blank", href="http://twitter.com/" + userInfo.screen_name + "")
+                        span(style="font-size:14px")= "@" + userInfo.screen_name
+                    .tweet--text
+                        p TWEET:
+                        p= val.text
+                    ul.app--tweet--actions.circle--list--inline
+                        li
+                          a.app--retweet
+                            span Fav's
+                            strong(style="color: #2980b9")= " (" +val.favourites + ")"
+                        
+                        li
+                          a.app--like
+                            span RT's
+                            strong(style="color: #2980b9")= " (" +val.retweets + ")"

@@ -1,0 +1,23 @@
+.bounds.app--body
+    .app--section--header
+        .grid-33
+            .app--section--heading
+                h2 Timeline
+        .grid-33
+            .app--section--heading
+                strong
+                h2 Following
+        .grid-33
+            .app--section--heading
+                h2 Direct Messages
+
+    include ./app-modules/timeline.pug
+    include ./app-modules/following.pug
+    include ./app-modules/direct-messages.pug
+
+
+
+    .grid-33
+        .app--section
+            ul.app--message--list
+                // DIRECT MESSAGES

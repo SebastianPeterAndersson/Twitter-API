@@ -1,0 +1,14 @@
+.grid-33
+    .app--section
+        ul.app--user--list
+            each val in friends
+                li
+                    .circle--fluid
+                        .circle--fluid--cell.circle--fluid--primary
+                            a.app--tweet--author(target="_blank", href="http://twitter.com/" + val.screen_name + "")
+                                .app--avatar(style='background-image: url(' + val.profile_image + ')')
+                                    img(src='images/f-spore.png')
+                                h4= val.name
+                                p= "@" + val.screen_name
+                            .circle--fluid--cell
+                        a.button.button-text Following

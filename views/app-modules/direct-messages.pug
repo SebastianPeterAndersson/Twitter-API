@@ -1,0 +1,11 @@
+.grid-33
+    .app--section
+        ul.app--message--list
+            each val in messages
+                li.app--message--me
+                    p.sender--name= val.sender
+                    p.time--stamp= val.date_time
+                    .app--avatar(style="background-image: url(" + val.sender_img + ")")
+                        img(src='images/m-spore.png')
+                    p.app--message--text(style="margin-right: 60px;")= val.text
+                    p.app--message--timestamp(style="float:left")
